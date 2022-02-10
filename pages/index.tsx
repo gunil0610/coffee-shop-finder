@@ -1,7 +1,9 @@
 import type { NextPage } from "next";
 import Head from "next/head";
+
 import Banner from "../components/banner";
-import Link from "next/link";
+import Card from "../components/card";
+import cafeList from "../data/coffee-stores.json";
 
 import styles from "../styles/Home.module.css";
 import Image from "next/image";
@@ -10,12 +12,6 @@ const Home: NextPage = () => {
   const handleOnBannerBtnClick = () => {
     console.log("hi banner button");
   };
-
-  const cafeList = [
-    { id: "cafe1", name: "Cafe 1" },
-    { id: "cafe2", name: "Cafe 2" },
-    { id: "cafe3", name: "Cafe 3" },
-  ];
 
   return (
     <div className={styles.container}>
@@ -38,11 +34,16 @@ const Home: NextPage = () => {
             height={400}
           />
         </div>
-        {cafeList.map((cafe) => (
-          <Link key={cafe.id} href={`/coffee-store/${cafe.id}`}>
-            <a>{cafe.name}</a>
-          </Link>
-        ))}
+        <div className={styles.cardLayout}>
+          {cafeList.map((cafe) => (
+            <Card
+              key={cafe.id}
+              name={cafe.name}
+              href={`/coffee-store/${cafe.id}`}
+              imgUrl={cafe.imgUrl}
+            />
+          ))}
+        </div>
       </main>
     </div>
   );
