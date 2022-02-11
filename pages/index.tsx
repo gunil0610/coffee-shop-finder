@@ -3,6 +3,7 @@ import Head from "next/head";
 
 import Banner from "../components/banner";
 import Card from "../components/card";
+import { CafeList } from "../common/types/cafeList";
 import cafeData from "../data/coffee-stores.json";
 
 import styles from "../styles/Home.module.css";
@@ -14,15 +15,6 @@ export async function getStaticProps() {
       cafeList: cafeData,
     },
   };
-}
-
-interface CafeList {
-  id: string;
-  address: string;
-  imgUrl: string;
-  name: string;
-  neighbourhood: string;
-  websiteUrl: string;
 }
 
 interface Props {
