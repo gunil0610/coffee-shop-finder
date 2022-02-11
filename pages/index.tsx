@@ -3,12 +3,33 @@ import Head from "next/head";
 
 import Banner from "../components/banner";
 import Card from "../components/card";
-import cafeList from "../data/coffee-stores.json";
+import cafeData from "../data/coffee-stores.json";
 
 import styles from "../styles/Home.module.css";
 import Image from "next/image";
 
-const Home: NextPage = () => {
+export async function getStaticProps() {
+  return {
+    props: {
+      cafeList: cafeData,
+    },
+  };
+}
+
+interface CafeList {
+  id: string;
+  address: string;
+  imgUrl: string;
+  name: string;
+  neighbourhood: string;
+  websiteUrl: string;
+}
+
+interface Props {
+  cafeList: CafeList[];
+}
+
+const Home: NextPage<Props> = ({ cafeList }) => {
   const handleOnBannerBtnClick = () => {
     console.log("hi banner button");
   };
@@ -34,16 +55,21 @@ const Home: NextPage = () => {
             height={400}
           />
         </div>
-        <div className={styles.cardLayout}>
-          {cafeList.map((cafe) => (
-            <Card
-              key={cafe.id}
-              name={cafe.name}
-              href={`/coffee-store/${cafe.id}`}
-              imgUrl={cafe.imgUrl}
-            />
-          ))}
-        </div>
+        {cafeList.length > 0 && (
+          <div className={styles.sectionWrapper}>
+            <h2 className={styles.heading2}>Toronto cafe</h2>
+            <div className={styles.cardLayout}>
+              {cafeList.map((cafe) => (
+                <Card
+                  key={cafe.id}
+                  name={cafe.name}
+                  href={`/coffee-store/${cafe.id}`}
+                  imgUrl={cafe.imgUrl}
+                />
+              ))}
+            </div>
+          </div>
+        )}
       </main>
     </div>
   );
