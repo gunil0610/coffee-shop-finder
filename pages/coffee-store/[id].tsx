@@ -4,6 +4,7 @@ import Link from "next/link";
 
 import { CafeList } from "../../common/types/cafeList";
 import cafeData from "../../data/coffee-stores.json";
+import Head from "next/head";
 
 export function getStaticProps({ params }: any) {
   return {
@@ -14,8 +15,11 @@ export function getStaticProps({ params }: any) {
 }
 
 export function getStaticPaths() {
+  const paths = cafeData.map((cafe) => ({
+    params: { id: cafe.id.toString() },
+  }));
   return {
-    paths: [{ params: { id: "0" } }, { params: { id: "1" } }],
+    paths,
     fallback: true,
   };
 }
@@ -27,14 +31,23 @@ interface Props {
 const CoffeeStore: NextPage<Props> = ({ cafe }) => {
   const router = useRouter();
 
+  if (router.isFallback) {
+    return <div>Loading...</div>;
+  }
+
+  const { address, name, neighbourhood } = cafe;
+
   return (
     <div>
-      Coffee Store Page of id {router.query.id}
+      <Head>
+        <title>{name}</title>
+      </Head>
       <Link href="/">
         <a>Back to home</a>
       </Link>
-      <p>{cafe.address}</p>
-      <p>{cafe.name}</p>
+      <p>{address}</p>
+      <p>{name}</p>
+      <p>{neighbourhood}</p>
     </div>
   );
 };
