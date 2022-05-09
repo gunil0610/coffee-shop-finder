@@ -9,7 +9,7 @@ import styles from "../styles/Home.module.css";
 import Image from "next/image";
 import { fetchCoffeeStores } from "lib/coffee-stores";
 import useTrackLocation from "hooks/use-track-location";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 export async function getStaticProps() {
   const cafeList = await fetchCoffeeStores();
@@ -29,17 +29,21 @@ const Home: NextPage<Props> = ({ cafeList }) => {
   const { handleTrackLocation, latLong, locationErrorMsg, isFindingLocation } =
     useTrackLocation();
 
+  const [coffeeStores, setCoffeeStores] = useState<TransformedCafeData[]>([]);
+  const [coffeeStoresError, setCoffeeStoresError] = useState<any>(null);
+
   useEffect(() => {
     const handleLatLong = async (latLong: string) => {
       const fetchedCoffeeStores = await fetchCoffeeStores(latLong, 30);
-      console.log({ fetchedCoffeeStores });
+      setCoffeeStores(fetchedCoffeeStores);
     };
 
     if (latLong) {
       try {
         handleLatLong(latLong);
-      } catch (error) {
-        console.log(error);
+      } catch (error: any) {
+        console.log({ error });
+        setCoffeeStoresError(error.message);
       }
     }
   }, [latLong]);
@@ -63,6 +67,7 @@ const Home: NextPage<Props> = ({ cafeList }) => {
           handleOnClick={handleOnBannerBtnClick}
         />
         {locationErrorMsg && <p>Something went wrong: {locationErrorMsg}</p>}
+        {coffeeStoresError && <p>Something went wrong: {coffeeStoresError}</p>}
         <div className={styles.heroImage}>
           <Image
             src="/static/hero-image.png"
@@ -71,6 +76,24 @@ const Home: NextPage<Props> = ({ cafeList }) => {
             height={400}
           />
         </div>
+        {coffeeStores.length > 0 && (
+          <div className={styles.sectionWrapper}>
+            <h2 className={styles.heading2}>Cafe near me</h2>
+            <div className={styles.cardLayout}>
+              {coffeeStores.map((cafe) => (
+                <Card
+                  key={cafe.id}
+                  name={cafe.name}
+                  href={`/coffee-store/${cafe.id}`}
+                  imgUrl={
+                    cafe.imgUrl ||
+                    "https://images.unsplash.com/photo-1504753793650-d4a2b783c15e?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=2000&q=80"
+                  }
+                />
+              ))}
+            </div>
+          </div>
+        )}
         {cafeList.length > 0 && (
           <div className={styles.sectionWrapper}>
             <h2 className={styles.heading2}>Paris cafe</h2>
