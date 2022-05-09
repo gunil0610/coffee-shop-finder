@@ -51,7 +51,7 @@ const Home: NextPage<Props> = ({ cafeList }) => {
         </div>
         {cafeList.length > 0 && (
           <div className={styles.sectionWrapper}>
-            <h2 className={styles.heading2}>Toronto cafe</h2>
+            <h2 className={styles.heading2}>Paris cafe</h2>
             <div className={styles.cardLayout}>
               {cafeList.map((cafe) => (
                 <Card
