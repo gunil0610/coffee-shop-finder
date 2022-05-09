@@ -6,7 +6,7 @@ import Image from "next/image";
 
 import cls from "classnames";
 
-import { CafeData } from "../../common/types/cafeList";
+import { TransformedCafeData } from "../../common/types/cafeList";
 import styles from "../../styles/coffee-store.module.css";
 
 import { fetchCoffeeStores } from "lib/coffee-stores";
@@ -32,7 +32,7 @@ export async function getStaticPaths() {
 }
 
 interface Props {
-  cafe: CafeData;
+  cafe: TransformedCafeData;
 }
 
 const CoffeeStore: NextPage<Props> = ({ cafe }) => {
@@ -42,7 +42,7 @@ const CoffeeStore: NextPage<Props> = ({ cafe }) => {
     return <div>Loading...</div>;
   }
 
-  const { location, name } = cafe;
+  const { address, neighborhood, name, imgUrl } = cafe;
 
   const handleUpvoteButton = () => {
     console.log("handle upvote");
@@ -66,6 +66,7 @@ const CoffeeStore: NextPage<Props> = ({ cafe }) => {
           <div className={styles.storeImgWrapper}>
             <Image
               src={
+                imgUrl ||
                 "https://images.unsplash.com/photo-1504753793650-d4a2b783c15e?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=2000&q=80"
               }
               width={600}
@@ -83,9 +84,9 @@ const CoffeeStore: NextPage<Props> = ({ cafe }) => {
               height={24}
               alt="places icon"
             />
-            <p className={styles.text}>{location.address}</p>
+            <p className={styles.text}>{address}</p>
           </div>
-          {location.neighborhood && (
+          {neighborhood && (
             <div className={styles.iconWrapper}>
               <Image
                 src="/static/icons/nearMe.svg"
@@ -93,7 +94,7 @@ const CoffeeStore: NextPage<Props> = ({ cafe }) => {
                 height={24}
                 alt="near me icon"
               />
-              <p className={styles.text}>{location.neighborhood}</p>
+              <p className={styles.text}>{neighborhood}</p>
             </div>
           )}
           <div className={styles.iconWrapper}>

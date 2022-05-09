@@ -37,7 +37,6 @@ interface relatedPlaceType {
 }
 
 export interface CafeData {
-  id: string;
   fsq_id: string;
   categories: categoryType[];
   chains: chainType[];
@@ -51,4 +50,13 @@ export interface CafeData {
   name: string;
   related_places: Record<string, relatedPlaceType[]>;
   timezone: string;
+  imgUrl?: string;
+}
+
+export interface TransformedCafeData {
+  id: string;
+  address: string;
+  name: string;
+  neighborhood: string;
+  imgUrl?: string;
 }
