@@ -8,6 +8,7 @@ import { TransformedCafeData } from "../common/types/cafeList";
 import styles from "../styles/Home.module.css";
 import Image from "next/image";
 import { fetchCoffeeStores } from "lib/coffee-stores";
+import useTrackLocation from "hooks/use-track-location";
 
 export async function getStaticProps() {
   const cafeList = await fetchCoffeeStores();
@@ -24,8 +25,12 @@ interface Props {
 }
 
 const Home: NextPage<Props> = ({ cafeList }) => {
+  const { handleTrackLocation, latLong, locationErrorMsg, isFindingLocation } =
+    useTrackLocation();
+
   const handleOnBannerBtnClick = () => {
     console.log("hi banner button");
+    handleTrackLocation();
   };
 
   return (
@@ -38,9 +43,10 @@ const Home: NextPage<Props> = ({ cafeList }) => {
 
       <main className={styles.main}>
         <Banner
-          buttonText="View stores nearby"
+          buttonText={isFindingLocation ? "Locating..." : "View stores nearby"}
           handleOnClick={handleOnBannerBtnClick}
         />
+        {locationErrorMsg && <p>Something went wrong: {locationErrorMsg}</p>}
         <div className={styles.heroImage}>
           <Image
             src="/static/hero-image.png"
