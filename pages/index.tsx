@@ -3,17 +3,11 @@ import Head from "next/head";
 
 import Banner from "../components/banner";
 import Card from "../components/card";
-import { CafeList } from "../common/types/cafeList";
+import { CafeData } from "../common/types/cafeList";
 
 import styles from "../styles/Home.module.css";
 import Image from "next/image";
 import { fetchCoffeeStores } from "lib/coffee-stores";
-
-interface categoryType {
-  id: number;
-  name: string;
-  icon: { prefix: string; suffic: string };
-}
 
 export async function getStaticProps() {
   const cafeList = await fetchCoffeeStores();
@@ -26,7 +20,7 @@ export async function getStaticProps() {
 }
 
 interface Props {
-  cafeList: CafeList[];
+  cafeList: CafeData[];
 }
 
 const Home: NextPage<Props> = ({ cafeList }) => {
@@ -65,7 +59,6 @@ const Home: NextPage<Props> = ({ cafeList }) => {
                   name={cafe.name}
                   href={`/coffee-store/${cafe.id}`}
                   imgUrl={
-                    cafe.imgUrl ||
                     "https://images.unsplash.com/photo-1504753793650-d4a2b783c15e?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=2000&q=80"
                   }
                 />
