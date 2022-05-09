@@ -9,6 +9,7 @@ import styles from "../styles/Home.module.css";
 import Image from "next/image";
 import { fetchCoffeeStores } from "lib/coffee-stores";
 import useTrackLocation from "hooks/use-track-location";
+import { useEffect } from "react";
 
 export async function getStaticProps() {
   const cafeList = await fetchCoffeeStores();
@@ -27,6 +28,21 @@ interface Props {
 const Home: NextPage<Props> = ({ cafeList }) => {
   const { handleTrackLocation, latLong, locationErrorMsg, isFindingLocation } =
     useTrackLocation();
+
+  useEffect(() => {
+    const handleLatLong = async (latLong: string) => {
+      const fetchedCoffeeStores = await fetchCoffeeStores(latLong, 30);
+      console.log({ fetchedCoffeeStores });
+    };
+
+    if (latLong) {
+      try {
+        handleLatLong(latLong);
+      } catch (error) {
+        console.log(error);
+      }
+    }
+  }, [latLong]);
 
   const handleOnBannerBtnClick = () => {
     console.log("hi banner button");

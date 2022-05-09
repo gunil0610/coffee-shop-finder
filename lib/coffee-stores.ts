@@ -4,7 +4,7 @@ import { createApi } from "unsplash-js";
 
 // @ts-ingnore
 const unsplashApi = createApi({
-  accessKey: process.env.UNSPLASH_ACCESS_KEY ?? "",
+  accessKey: process.env.NEXT_PUBLIC_UNSPLASH_ACCESS_KEY ?? "",
 });
 
 import { CafeData, TransformedCafeData } from "common/types/cafeList";
@@ -20,31 +20,32 @@ const getUrlForCoffeeStores = (
 const getListOfCoffeeStorePhotos = async () => {
   const photos = await unsplashApi.search.getPhotos({
     query: "coffee shop",
-    perPage: 10,
+    perPage: 40,
   });
   const unsplashResults = photos.response?.results;
   return unsplashResults?.map((result) => result.urls["small"]);
 };
 
-export const fetchCoffeeStores = async () => {
-  if (!process.env.FOURSQUARE_API_KEY) return [];
+const PARIS_LAT_LONG = "48.837752030448904,2.355177591459498";
+
+export const fetchCoffeeStores = async (
+  latLong = PARIS_LAT_LONG,
+  limit = 6
+) => {
+  if (!process.env.NEXT_PUBLIC_FOURSQUARE_API_KEY) return [];
 
   const photos = await getListOfCoffeeStorePhotos();
-  const response = await fetch(
-    getUrlForCoffeeStores("48.837752030448904,2.355177591459498", "cafe", 6),
-    {
-      headers: {
-        Authorization: process.env.FOURSQUARE_API_KEY,
-      },
-    }
-  );
+  const response = await fetch(getUrlForCoffeeStores(latLong, "cafe", limit), {
+    headers: {
+      Authorization: process.env.NEXT_PUBLIC_FOURSQUARE_API_KEY,
+    },
+  });
 
   const data = await response.json();
 
   const transformedData: TransformedCafeData[] =
     data?.results?.map((venue: CafeData, idx: number) => {
       return {
-        // ...venue,
         id: venue.fsq_id,
         address: venue.location.address || "",
         name: venue.name,
