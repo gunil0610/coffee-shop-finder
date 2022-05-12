@@ -9,7 +9,8 @@ import styles from "../styles/Home.module.css";
 import Image from "next/image";
 import { fetchCoffeeStores } from "lib/coffee-stores";
 import useTrackLocation from "hooks/use-track-location";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
+import { ACTION_TYPES, StoreContext } from "./_app";
 
 export async function getStaticProps() {
   const cafeList = await fetchCoffeeStores();
@@ -26,16 +27,22 @@ interface Props {
 }
 
 const Home: NextPage<Props> = ({ cafeList }) => {
-  const { handleTrackLocation, latLong, locationErrorMsg, isFindingLocation } =
+  const { handleTrackLocation, locationErrorMsg, isFindingLocation } =
     useTrackLocation();
 
-  const [coffeeStores, setCoffeeStores] = useState<TransformedCafeData[]>([]);
   const [coffeeStoresError, setCoffeeStoresError] = useState<any>(null);
+
+  const { dispatch, state } = useContext(StoreContext);
+
+  const { coffeeStores, latLong } = state;
 
   useEffect(() => {
     const handleLatLong = async (latLong: string) => {
       const fetchedCoffeeStores = await fetchCoffeeStores(latLong, 30);
-      setCoffeeStores(fetchedCoffeeStores);
+      dispatch({
+        type: ACTION_TYPES.SET_COFFEE_STORES,
+        payload: { ...state, coffeeStores: fetchedCoffeeStores },
+      });
     };
 
     if (latLong) {
@@ -76,7 +83,7 @@ const Home: NextPage<Props> = ({ cafeList }) => {
             height={400}
           />
         </div>
-        {coffeeStores.length > 0 && (
+        {coffeeStores?.length > 0 && (
           <div className={styles.sectionWrapper}>
             <h2 className={styles.heading2}>Cafe near me</h2>
             <div className={styles.cardLayout}>
